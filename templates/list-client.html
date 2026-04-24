@@ -1,0 +1,67 @@
+{% include "header.html" %}
+
+<!-- Page Header-->
+<header
+  class="masthead"
+  style="background-image: url('../static/assets/img/home-bg.jpg')"
+>
+  <div class="container position-relative px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+      <div class="col-md-12 col-lg-10 col-xl-9">
+        <div class="site-heading">
+          <h1>Client listing</h1>
+          <span class="subheading">A collection of client details.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Main Content-->
+<div class="container px-4 px-lg-5">
+  <div class="row gx-4 gx-lg-5 justify-content-center">
+    <div class="col-md-12 col-lg-10 col-xl-9">
+      <!--client table -->
+      <table id="example" class="table table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    {% for h in table_header: %}
+                    <th>{{ h }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Tiger Nixon</td>
+                    <td>System Architect aaafd afag</td>
+                    <td>Edinburgh</td>
+                    <td>61</td>
+                </tr>
+                <tr>
+                    <td>Tiger Nixon2</td>
+                    <td>System Architect2</td>
+                    <td>Edinburgh2</td>
+                    <td>612</td>
+                </tr>
+                <!-- Add more rows as needed -->
+            </tbody>
+        </table>
+
+      <!-- New Post -->
+      <!-- TODO: Only show Create Post button if user id is 1 (admin user) -->
+      <div class="d-flex justify-content-end mb-4">
+        <a
+          class="btn btn-primary float-right"
+          href="{{url_for('add_new_post')}}"
+          >Create New Post</a
+        >
+      </div>
+
+      <!-- Pager-->
+      <div class="d-flex justify-content-end mb-4">
+        <a class="btn btn-secondary text-uppercase" href="#!">Older Posts →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% include "footer.html" %}

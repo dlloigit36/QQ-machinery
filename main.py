@@ -81,6 +81,11 @@ def get_all_posts():
     posts = result.scalars().all()
     return render_template("index.html", all_posts=posts)
 
+@app.route('/client')
+def get_all_client():
+    client_t_header = ["Name", "Description", "Created", "Parts count"]
+    return render_template("list-client.html", table_header=client_t_header)
+
 
 # TODO: Allow logged-in users to comment on posts
 @app.route("/post/<int:post_id>")
