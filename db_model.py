@@ -5,47 +5,36 @@ from flask_login import UserMixin
 from db_config import db
 
 # CONFIGURE TABLES
-class BlogPost(db.Model):
-    __tablename__ = "blog_posts"
+# TODO: Create a client table for all your customer/client.
+class QClient(db.Model):
+    __tablename__ = "qq_clients"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    title: Mapped[str] = mapped_column(String(250), unique=True, nullable=False)
-    subtitle: Mapped[str] = mapped_column(String(250), nullable=False)
-    date: Mapped[str] = mapped_column(String(250), nullable=False)
-    body: Mapped[str] = mapped_column(Text, nullable=False)
-    # author: Mapped[str] = mapped_column(String(250), nullable=False)
-    img_url: Mapped[str] = mapped_column(String(250), nullable=False)
-    # Create Foreign Key, "users.id" the users refers to the table name of User.
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("blog_users.id"))
-    # Create reference to the User object. The "posts" refers to the posts property in the User class.
-    author = relationship("User", back_populates="posts")
-
-
+    name: Mapped[str] = mapped_column(String(250), unique=True, nullable=False)
+    description: Mapped[str] = mapped_column(String(500), nullable=False)
+    create_date: Mapped[str] = mapped_column(String(70), nullable=False)
 
 # TODO: Create a User table for all your registered users.
-class User(UserMixin, db.Model):
-    __tablename__ = "blog_users"
+class QUser(UserMixin, db.Model):
+    __tablename__ = "qq_users"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     email: Mapped[str] = mapped_column(String(100), unique=True)  # sqlite database unique meaning case insensitive
     password: Mapped[str] = mapped_column(String(100), nullable=False)
     name: Mapped[str] = mapped_column(String(1000), nullable=False)
     # user profile for "admin" or "user", default to "user"
     profile: Mapped[str] = mapped_column(String(10), nullable=True, default="user")
-    # This will act like a List of BlogPost objects attached to each User.
-    # The "author" refers to the author property in the BlogPost class.
-    posts = relationship("BlogPost", back_populates="author")
-    # *******Add parent relationship*******#
-    # "comment_author" refers to the comment_author property in the BlogComment class.
-    comments = relationship("BlogComment", back_populates="comment_author")
 
-
-# TODO: Create a Comments table
-class BlogComment(db.Model):
-    __tablename__ = "blog_comments"
+# TODO: Create a Parts table
+class QPart(db.Model):
+    __tablename__ = "qq_parts"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    text: Mapped[str] = mapped_column(Text, nullable=False)
-    date: Mapped[str] = mapped_column(String(250), nullable=False)
-    # *******Add child relationship*******#
-    # "blog_users.id" The users refers to the tablename of the Users class.
-    # "comments" refers to the comments property in the User class.
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("blog_users.id"))
-    comment_author = relationship("User", back_populates="comments")
+    manufacturer: Mapped[str] = mapped_column(String(100), nullable=False)
+    model: Mapped[str] = mapped_column(String(100), nullable=False)
+    serial_number: Mapped[str] = mapped_column(String(100), nullable=False)
+    shipping_date: Mapped[str] = mapped_column(String(70), nullable=False)
+    inspected_b: Mapped[str] = mapped_column(String(1), nullable=False)
+    remark: Mapped[str] = mapped_column(String(500), nullable=True)
+    photo_uri: Mapped[str] = mapped_column(String(500), nullable=True)
+    edited_at: Mapped[str] = mapped_column(String(70), nullable=False)
+    date: Mapped[str] = mapped_column(String(70), nullable=False)
+    client_id: Mapped[int] = mapped_column(Integer, ForeignKey("qq_clients.id"))
+
