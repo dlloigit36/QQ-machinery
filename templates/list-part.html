@@ -1,21 +1,23 @@
 {% include "header.html" %}
 
 <!-- Page Header-->
-<header
-  class="masthead"
-  style="background-image: url('../static/assets/img/home-bg.jpg')"
->
+<header class="masthead" style="">
   <div class="container position-relative px-4 px-lg-5">
     <div class="row gx-4 gx-lg-5 justify-content-center">
-      <div class="col-md-12 col-lg-10 col-xl-9">
-        <div class="site-heading">
-          <h1>Client listing</h1>
-          <span class="subheading">A collection of client details.</span>
+      <div class="col-md-10 col-lg-8 col-xl-7">
+        <div class="post-heading">
+          <h1>{{ client.name }}</h1>
+<!--          <h2 class="subheading">{{ client.description }}</h2>-->
+          <span class="meta"
+            >Listing of all parts...
+          </span>
         </div>
       </div>
     </div>
   </div>
 </header>
+
+<!-- TODO: table to display all parts for selected client -->
 <!-- Main Content-->
 <div class="container px-4 px-lg-5">
   <div class="row gx-4 gx-lg-5 justify-content-center">
@@ -30,16 +32,19 @@
                 </tr>
             </thead>
             <tbody>
-                {% for client in all_client: %}
-
+            {% for p in all_part: %}
                 <tr>
-                    <td><a href="{{ url_for('get_client_part', client_id=client.id) }}">{{ client.name }}</a></td>
-                    <td>{{ client.description }}</td>
-                    <td>{{ client.create_date }}</td>
-                    <td>61</td>
+                    <td>{{ p.manufacturer }}</td>
+                    <td>{{ p.model }}</td>
+                    <td>{{ p.serial_number }}</td>
+                    <td>{{ p.shipping_date }}</td>
+                    <td>{{ p.inspected_b }}</td>
+                    <td>{{ p.remark }}</td>
+                    <td>{{ p.photo_uri }}</td>
+                    <td>{{ p.edit_date }}</td>
+                    <td>{{ p.create_date }}</td>
                 </tr>
-                {% endfor %}
-                <!-- Add more rows as needed -->
+            {% endfor %}
             </tbody>
         </table>
 
@@ -48,17 +53,14 @@
       <div class="d-flex justify-content-end mb-4">
         <a
           class="btn btn-primary float-right"
-          href="{{url_for('add_new_client')}}"
-          >Create New Client</a
+          href="{{url_for('add_new_part', clientId=client.id)}}"
+          >Create New Part</a
         >
       </div>
 
-      <!-- Pager-->
-      <div class="d-flex justify-content-end mb-4">
-        <a class="btn btn-secondary text-uppercase" href="#!">Older Posts →</a>
-      </div>
     </div>
   </div>
 </div>
+
 
 {% include "footer.html" %}

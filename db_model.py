@@ -34,7 +34,7 @@ class QPart(db.Model):
     inspected_b: Mapped[str] = mapped_column(String(1), nullable=False)
     remark: Mapped[str] = mapped_column(String(500), nullable=True)
     photo_uri: Mapped[str] = mapped_column(String(500), nullable=True)
-    edited_at: Mapped[str] = mapped_column(String(70), nullable=False)
-    date: Mapped[str] = mapped_column(String(70), nullable=False)
+    edit_date: Mapped[str] = mapped_column(String(70), nullable=False)
+    create_date: Mapped[str] = mapped_column(String(70), nullable=False)
     client_id: Mapped[int] = mapped_column(Integer, ForeignKey("qq_clients.id"))
 

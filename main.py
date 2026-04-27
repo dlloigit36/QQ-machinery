@@ -1,5 +1,5 @@
 from datetime import date
-from flask import Flask, abort, render_template, redirect, url_for, flash
+from flask import Flask, abort, render_template, redirect, url_for, flash, request
 from flask_bootstrap import Bootstrap5
 from flask_ckeditor import CKEditor
 from flask_gravatar import Gravatar
@@ -11,7 +11,7 @@ from sqlalchemy import Integer, String, Text
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 # Import your forms from the forms.py
-from forms import CreateClientForm
+from forms import CreateClientForm, CreatePartForm
 
 from db_config import db, init_db
 from db_model import QUser, QClient, QPart
@@ -95,10 +95,19 @@ def get_all_client():
 
 
 # TODO: Allow logged-in users to comment on posts
-@app.route("/client/<int:client_id>")
-def show_client(client_id):
+@app.route("/client-part/<int:client_id>")
+def get_client_part(client_id):
     requested_client = db.get_or_404(QClient, client_id)
-    return render_template("client.html", client=requested_client)
+    part_t_header=["Manufacturer", "Model", "Serial number", "Shipping date", "Inspected", "Remark",
+                   "Photo URL", "Edited", "Created"]
+    result = db.session.execute(db.select(QPart).where(QPart.client_id == int(client_id)))
+    parts = result.scalars().all()
+    return render_template(
+        "list-part.html",
+        table_header=part_t_header,
+        all_part=parts,
+        client=requested_client
+    )
 
 
 # TODO: Use a decorator so only an admin user can create a new post
@@ -125,6 +134,33 @@ def add_new_client():
             return redirect(url_for("get_all_client"))
     return render_template("make-client.html", form=form)
 
+@app.route("/new-part", methods=["GET", "POST"])
+def add_new_part():
+    client_id = request.args.get("clientId", type=str)
+    requested_client = db.get_or_404(QClient, client_id)
+    create_part_form = CreatePartForm()
+    if create_part_form.validate_on_submit():
+        new_part = QPart(
+            manufacturer=create_part_form.manufacturer.data,
+            model=create_part_form.model.data,
+            serial_number=create_part_form.serial_number.data,
+            shipping_date=create_part_form.shipping_date.data,
+            inspected_b=create_part_form.inspected_b.data,
+            remark=create_part_form.remark.data,
+            photo_uri=create_part_form.photo_uri.data,
+            edit_date=create_part_form.edit_date.data,
+            create_date=create_part_form.create_date.data,
+            client_id=int(client_id)
+        )
+        db.session.add(new_part)
+        db.session.commit()
+        return redirect(url_for("get_client_part", client_id=client_id))
+    return render_template(
+        "make-part.html",
+        form=create_part_form,
+        action="create",
+        client=requested_client)
+
 
 # TODO: Use a decorator so only an admin user can edit a post
 @app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
@@ -145,7 +181,7 @@ def edit_post(post_id):
         post.body = edit_form.body.data
         db.session.commit()
         return redirect(url_for("show_post", post_id=post.id))
-    return render_template("make-client.html", form=edit_form, is_edit=True)
+    return render_template("make-list-part.html", form=edit_form, is_edit=True)
 
 
 # TODO: Use a decorator so only an admin user can delete a post
