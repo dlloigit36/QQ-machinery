@@ -5,15 +5,16 @@ from flask_ckeditor import CKEditor
 from flask_gravatar import Gravatar
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String, Text
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 # Import your forms from the forms.py
-from forms import CreatePostForm
+from forms import CreateClientForm
 
 from db_config import db, init_db
-from db_model import BlogPost, User
+from db_model import QUser, QClient, QPart
 '''
 Make sure the required packages are installed: 
 Open the Terminal in PyCharm (bottom left). 
@@ -40,7 +41,7 @@ login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(user_id):
-    return db.get_or_404(User, user_id)
+    return db.get_or_404(QUser, user_id)
 
 # decorator functions
 def admin_only(f):
@@ -83,34 +84,46 @@ def get_all_posts():
 
 @app.route('/client')
 def get_all_client():
+    result = db.session.execute((db.select(QClient)))
+    clients = result.scalars().all()
     client_t_header = ["Name", "Description", "Created", "Parts count"]
-    return render_template("list-client.html", table_header=client_t_header)
+    return render_template(
+        "list-client.html",
+        table_header=client_t_header,
+        all_client=clients
+    )
 
 
 # TODO: Allow logged-in users to comment on posts
-@app.route("/post/<int:post_id>")
-def show_post(post_id):
-    requested_post = db.get_or_404(BlogPost, post_id)
-    return render_template("post.html", post=requested_post)
+@app.route("/client/<int:client_id>")
+def show_client(client_id):
+    requested_client = db.get_or_404(QClient, client_id)
+    return render_template("client.html", client=requested_client)
 
 
 # TODO: Use a decorator so only an admin user can create a new post
-@app.route("/new-post", methods=["GET", "POST"])
-def add_new_post():
-    form = CreatePostForm()
+@app.route("/new-client", methods=["GET", "POST"])
+def add_new_client():
+    form = CreateClientForm()
     if form.validate_on_submit():
-        new_post = BlogPost(
-            title=form.title.data,
-            subtitle=form.subtitle.data,
-            body=form.body.data,
-            img_url=form.img_url.data,
-            author=current_user,
-            date=date.today().strftime("%B %d, %Y")
+        new_client = QClient(
+            name=form.name.data,
+            description=form.description.data,
+            create_date=date.today().strftime("%Y-%m-%d")
         )
-        db.session.add(new_post)
-        db.session.commit()
-        return redirect(url_for("get_all_posts"))
-    return render_template("make-post.html", form=form)
+        try:
+            db.session.add(new_client)
+            db.session.commit()
+        except IntegrityError as e:
+            # catch error
+            db.session.rollback()
+            # flash message for error
+            print(f"db commit error= {e}")
+            msg = f"duplicate client name {form.name.data}"
+            flash(f'error: {msg}', 'error')
+        else:
+            return redirect(url_for("get_all_client"))
+    return render_template("make-client.html", form=form)
 
 
 # TODO: Use a decorator so only an admin user can edit a post
@@ -132,7 +145,7 @@ def edit_post(post_id):
         post.body = edit_form.body.data
         db.session.commit()
         return redirect(url_for("show_post", post_id=post.id))
-    return render_template("make-post.html", form=edit_form, is_edit=True)
+    return render_template("make-client.html", form=edit_form, is_edit=True)
 
 
 # TODO: Use a decorator so only an admin user can delete a post

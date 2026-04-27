@@ -19,9 +19,9 @@
 <!-- Main Content-->
 <div class="container px-4 px-lg-5">
   <div class="row gx-4 gx-lg-5 justify-content-center">
-    <div class="col-md-12 col-lg-10 col-xl-9">
+    <div class="col-md-14 col-lg-12 col-xl-11">
       <!--client table -->
-      <table id="example" class="table table-striped" style="width:100%">
+      <table id="example" class="table table-striped table-hover" style="width:100%">
             <thead>
                 <tr>
                     {% for h in table_header: %}
@@ -30,18 +30,14 @@
                 </tr>
             </thead>
             <tbody>
+                {% for client in all_client: %}
                 <tr>
-                    <td>Tiger Nixon</td>
-                    <td>System Architect aaafd afag</td>
-                    <td>Edinburgh</td>
+                    <td><a href="{{ url_for('show_client', client_id=client.id) }}">{{ client.name }}</a></td>
+                    <td>{{ client.description }}</td>
+                    <td>{{ client.create_date }}</td>
                     <td>61</td>
                 </tr>
-                <tr>
-                    <td>Tiger Nixon2</td>
-                    <td>System Architect2</td>
-                    <td>Edinburgh2</td>
-                    <td>612</td>
-                </tr>
+                {% endfor %}
                 <!-- Add more rows as needed -->
             </tbody>
         </table>
@@ -51,8 +47,8 @@
       <div class="d-flex justify-content-end mb-4">
         <a
           class="btn btn-primary float-right"
-          href="{{url_for('add_new_post')}}"
-          >Create New Post</a
+          href="{{url_for('add_new_client')}}"
+          >Create New Client</a
         >
       </div>
 

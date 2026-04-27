@@ -1,17 +1,16 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired, URL
+from wtforms.validators import DataRequired, URL, Length
 from flask_ckeditor import CKEditorField
 
 
-# WTForm for creating a blog post
-class CreatePostForm(FlaskForm):
-    title = StringField("Blog Post Title", validators=[DataRequired()])
-    subtitle = StringField("Subtitle", validators=[DataRequired()])
-    img_url = StringField("Blog Image URL", validators=[DataRequired(), URL()])
-    body = CKEditorField("Blog Content", validators=[DataRequired()])
-    submit = SubmitField("Submit Post")
-
+# WTForm for creating a client
+class CreateClientForm(FlaskForm):
+    name = StringField("New client name", validators=[DataRequired(),
+                                                      Length(max=250, message="Input is too long (max 250 characters).")])
+    description = StringField("Description", validators=[DataRequired(),
+                                                         Length(max=500, message="Input is too long (max 500 characters).")])
+    submit = SubmitField("Create Client")
 
 # TODO: Create a RegisterForm to register new users
 

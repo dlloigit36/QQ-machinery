@@ -9,7 +9,7 @@ from db_config import db
 class QClient(db.Model):
     __tablename__ = "qq_clients"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(String(250), unique=True, nullable=False)
+    name: Mapped[str] = mapped_column(String(250, collation="NOCASE"), unique=True, nullable=False)
     description: Mapped[str] = mapped_column(String(500), nullable=False)
     create_date: Mapped[str] = mapped_column(String(70), nullable=False)
 
