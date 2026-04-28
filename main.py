@@ -1,3 +1,4 @@
+import os
 from datetime import date
 
 import werkzeug
@@ -14,6 +15,7 @@ from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 # Import your forms from the forms.py
 from forms import CreateClientForm, CreatePartForm, RegisterForm, LoginForm
+from dotenv import load_dotenv
 
 from db_config import db, init_db
 from db_model import QUser, QClient, QPart
@@ -29,9 +31,9 @@ pip3 install -r requirements.txt
 
 This will install the packages from the requirements.txt for this project.
 '''
-
+load_dotenv()
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '7778BYkEfBA6O6donzWlSihBXox7C0sKR6b77'
+app.config['SECRET_KEY'] = os.environ.get('FLASK_KEY', "8BYkEfBA6O6donzWlSihBXox7C0sKR6b")
 ckeditor = CKEditor(app)
 Bootstrap5(app)
 
