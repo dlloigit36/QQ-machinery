@@ -28,6 +28,11 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 })
 
+// to initialize Datatable
+document.addEventListener('DOMContentLoaded', function () {
+    new DataTable('#example');
+});
+
 // to inject copy right year with dynamic current year into footer with js
 const d = new Date();
 let year = d.getFullYear();

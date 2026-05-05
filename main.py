@@ -229,6 +229,10 @@ def add_new_part():
         current_user=current_user
     )
 
+@app.route('/table')
+def table_sample():
+    return render_template('test-table-2.html')
+
 
 # TODO: Use a decorator so only an admin user can edit a post
 @app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
