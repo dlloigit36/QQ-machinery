@@ -10779,3 +10779,82 @@ header.masthead .post-heading .meta a {
   color: #ee6f57;
   text-align: center;
 }
+
+/* ================================
+   CLIENT TABLE: SMALL & COMPACT
+   ================================ */
+
+/* Table font size */
+#example {
+  font-size: 0.875rem; /* 14px */
+}
+
+/* Table headers */
+#example thead th {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.5rem 0.6rem;
+  white-space: nowrap;
+}
+
+/* Table cells */
+#example tbody td {
+  font-size: 0.8rem;
+  padding: 0.45rem 0.6rem;
+  vertical-align: middle;
+}
+
+/* Reduce row height */
+#example tbody tr {
+  line-height: 1.2;
+}
+
+/* ================================
+   DATATABLES CONTROLS
+   ================================ */
+
+/* Search box */
+.dt-search input,
+.dt-search label {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.4rem;
+}
+
+/* "Show entries" dropdown */
+.dt-length select,
+.dt-length label {
+  font-size: 0.8rem;
+}
+
+
+/* Info text (e.g. "Showing 1 to 10...") */
+.dt-info {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Pagination buttons */
+.dt-paging .page-link {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  /* color: blue; */
+}
+
+/* Active page styling (Bootstrap-friendly) */
+.page-item.active .page-link {
+  font-weight: 600;
+}
+
+/* ================================
+   OPTIONAL: ULTRA COMPACT MODE
+   ================================ */
+
+/* Uncomment if you want VERY dense tables */
+/*
+#example th,
+#example td {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.5rem;
+}
+*/
+

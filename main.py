@@ -229,8 +229,14 @@ def add_new_part():
         current_user=current_user
     )
 
+# route to test Bootstrap5 dataset table template
 @app.route('/table')
 def table_sample():
+    return render_template('test-table.html')
+
+# route to test Bootstrap5 dataset table sample
+@app.route('/table2')
+def table_sample2():
     return render_template('test-table-2.html')
 
 
