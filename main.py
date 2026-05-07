@@ -2,19 +2,19 @@ import os
 from datetime import date
 
 import werkzeug
-from flask import Flask, abort, render_template, redirect, url_for, flash, request
+from flask import Flask, abort, render_template, redirect, url_for, flash, request, jsonify
 from flask_bootstrap import Bootstrap5
 from flask_ckeditor import CKEditor
 from flask_gravatar import Gravatar
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, ProgrammingError
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String, Text
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 # Import your forms from the forms.py
-from forms import CreateClientForm, CreatePartForm, RegisterForm, LoginForm
+from forms import CreateClientForm, CreatePartForm, RegisterForm, LoginForm, EditClientForm
 from dotenv import load_dotenv
 
 from db_config import db, init_db
@@ -51,7 +51,7 @@ def load_user(user_id):
 def admin_only(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if current_user.id != 1:
+        if current_user.profile != 'admin':
             return abort(403)
         return f(*args, **kwargs)
     return decorated_function
@@ -122,7 +122,7 @@ def login():
                 return redirect(url_for('home'))
             else:
                 flash(message="Wrong password. Please try again.", category='error')
-    return render_template("login.html", form=login_form, current_user=current_user)
+    return render_template("login.html", form=login_form, current_user=None)
 
 
 @app.route('/logout')
@@ -142,7 +142,7 @@ def home():
 def get_all_client():
     result = db.session.execute((db.select(QClient)))
     clients = result.scalars().all()
-    client_t_header = ["Name", "Description", "Created", "Parts count"]
+    client_t_header = ["Action", "Name", "Description", "Created", "Parts count"]
     return render_template(
         "list-client.html",
         table_header=client_t_header,
@@ -240,35 +240,46 @@ def table_sample2():
     return render_template('test-table-2.html')
 
 
-# TODO: Use a decorator so only an admin user can edit a post
-@app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
-def edit_post(post_id):
-    post = db.get_or_404(BlogPost, post_id)
-    edit_form = CreatePostForm(
-        title=post.title,
-        subtitle=post.subtitle,
-        img_url=post.img_url,
-        author=post.author,
-        body=post.body
+# TODO: Use a decorator so only an admin user can edit a client
+@app.route("/edit-client/<int:client_id>", methods=["GET", "POST"])
+@login_required
+def edit_client(client_id):
+    selected_client = db.get_or_404(QClient, client_id)
+    edit_form = EditClientForm(
+        name=selected_client.name,
+        description=selected_client.description
     )
     if edit_form.validate_on_submit():
-        post.title = edit_form.title.data
-        post.subtitle = edit_form.subtitle.data
-        post.img_url = edit_form.img_url.data
-        post.author = current_user
-        post.body = edit_form.body.data
-        db.session.commit()
-        return redirect(url_for("show_post", post_id=post.id))
-    return render_template("make-list-part.html", form=edit_form, is_edit=True)
+        selected_client.name = edit_form.name.data
+        selected_client.description = edit_form.description.data
+        try:
+            db.session.commit()
+        except IntegrityError as e:
+            db.session.rollback()
+            msg = f"duplicate client name {edit_form.name.data}"
+            flash(f'error: {msg}', 'error')
+        else:
+            return redirect(url_for("get_all_client"))
+    return render_template("make-client.html", form=edit_form, is_edit=True)
 
 
 # TODO: Use a decorator so only an admin user can delete a post
-@app.route("/delete/<int:post_id>")
-def delete_post(post_id):
-    post_to_delete = db.get_or_404(BlogPost, post_id)
-    db.session.delete(post_to_delete)
-    db.session.commit()
-    return redirect(url_for('get_all_posts'))
+@app.route("/delete-client/<int:client_id>", methods=['GET', 'POST'])
+@admin_only
+@login_required
+def delete_client(client_id):
+    client_to_delete = db.get_or_404(QClient, client_id)
+    if client_to_delete:
+        try:
+            db.session.delete(client_to_delete)
+            db.session.commit()
+        except ProgrammingError as e:
+            db.session.rollback()
+            return jsonify({"sql error": e})
+        else:
+            return redirect(url_for('get_all_client'))
+    else:
+        return jsonify({"delete client error": f"delete client failed, client id ={client_id} not found!"})
 
 
 @app.route("/about")

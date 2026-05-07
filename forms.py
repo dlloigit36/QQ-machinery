@@ -15,6 +15,14 @@ class CreateClientForm(FlaskForm):
                                                          Length(max=500, message="Input is too long (max 500 characters).")])
     submit = SubmitField("Create Client")
 
+# WTForm for edit a client
+class EditClientForm(FlaskForm):
+    name = StringField("Client new name", validators=[DataRequired(),
+                                                      Length(max=250, message="Input is too long (max 250 characters).")])
+    description = StringField("New Description", validators=[DataRequired(),
+                                                         Length(max=500, message="Input is too long (max 500 characters).")])
+    submit = SubmitField("Update Client")
+
 # TODO: Create a parts Form
 class CreatePartForm(FlaskForm):
     manufacturer = StringField(
