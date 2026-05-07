@@ -56,19 +56,55 @@ class CreatePartForm(FlaskForm):
         "Photo URI",
         validators=[Optional(), Length(max=500), URL()]
     )
-    edit_date = DateField(
-        "Edit Date",
-        format="%Y-%m-%d",
-        validators=[DataRequired()],
-        render_kw={"placeholder": "YYYY-MM-DD"}
-    )
-    create_date = DateField(
-        "Create Date",
-        format="%Y-%m-%d",
-        validators=[DataRequired()],
-        render_kw={"placeholder": "YYYY-MM-DD"}
-    )
+    # edit_date = DateField(
+    #     "Edit Date",
+    #     format="%Y-%m-%d",
+    #     validators=[DataRequired()],
+    #     render_kw={"placeholder": "YYYY-MM-DD"}
+    # )
+    # create_date = DateField(
+    #     "Create Date",
+    #     format="%Y-%m-%d",
+    #     validators=[DataRequired()],
+    #     render_kw={"placeholder": "YYYY-MM-DD"}
+    # )
     submit = SubmitField("Create Part")
+
+
+# TODO: Edit parts Form
+class EditPartForm(FlaskForm):
+    manufacturer = StringField(
+        "Manufacturer",
+        validators=[DataRequired(), Length(max=100)]
+    )
+    model = StringField(
+        "Model",
+        validators=[DataRequired(), Length(max=100)]
+    )
+    serial_number = StringField(
+        "Serial Number",
+        validators=[DataRequired(), Length(max=100)]
+    )
+    shipping_date = DateField(
+        "Shipping Date",
+        format="%Y-%m-%d",
+        validators=[DataRequired()],
+        render_kw={"placeholder": "YYYY-MM-DD"}
+    )
+    inspected_b = SelectField(
+        "Inspected",
+        choices=[("Y", "Yes"), ("N", "No")],
+        validators=[DataRequired()]
+    )
+    remark = TextAreaField(
+        "Remark",
+        validators=[Optional(), Length(max=500)]
+    )
+    photo_uri = StringField(
+        "Photo URI",
+        validators=[Optional(), Length(max=500), URL()]
+    )
+    submit = SubmitField("Update Part")
 
 # TODO: Create a RegisterForm to register new users
 class RegisterForm(FlaskForm):

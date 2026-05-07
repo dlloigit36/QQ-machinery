@@ -1,5 +1,5 @@
 import os
-from datetime import date
+from datetime import date, datetime
 
 import werkzeug
 from flask import Flask, abort, render_template, redirect, url_for, flash, request, jsonify
@@ -14,7 +14,7 @@ from sqlalchemy import Integer, String, Text
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 # Import your forms from the forms.py
-from forms import CreateClientForm, CreatePartForm, RegisterForm, LoginForm, EditClientForm
+from forms import CreateClientForm, CreatePartForm, RegisterForm, LoginForm, EditClientForm, EditPartForm
 from dotenv import load_dotenv
 
 from db_config import db, init_db
@@ -156,7 +156,7 @@ def get_all_client():
 @login_required
 def get_client_part(client_id):
     requested_client = db.get_or_404(QClient, client_id)
-    part_t_header=["Manufacturer", "Model", "Serial number", "Shipping date", "Inspected", "Remark",
+    part_t_header=["Action", "Manufacturer", "Model", "Serial number", "Shipping date", "Inspected", "Remark",
                    "Photo URL", "Edited", "Created"]
     result = db.session.execute(db.select(QPart).where(QPart.client_id == int(client_id)))
     parts = result.scalars().all()
@@ -214,8 +214,8 @@ def add_new_part():
             inspected_b=create_part_form.inspected_b.data,
             remark=create_part_form.remark.data,
             photo_uri=create_part_form.photo_uri.data,
-            edit_date=create_part_form.edit_date.data,
-            create_date=create_part_form.create_date.data,
+            edit_date=date.today().strftime("%Y-%m-%d"),
+            create_date=date.today().strftime("%Y-%m-%d"),
             client_id=int(client_id)
         )
         db.session.add(new_part)
@@ -281,6 +281,67 @@ def delete_client(client_id):
     else:
         return jsonify({"delete client error": f"delete client failed, client id ={client_id} not found!"})
 
+# TODO: Use a decorator so only an admin user can edit a part
+@app.route("/edit-part/<int:part_id>", methods=["GET", "POST"])
+@login_required
+def edit_part(part_id):
+    client_id = request.args.get("clientId", type=str)
+    requested_client = db.get_or_404(QClient, client_id)
+    selected_part = db.get_or_404(QPart, part_id)
+    print(selected_part)
+    edit_form = EditPartForm(
+        manufacturer=selected_part.manufacturer,
+        model=selected_part.model,
+        serial_number=selected_part.serial_number,
+        shipping_date=datetime.strptime(selected_part.shipping_date, "%Y-%m-%d").date(),
+        inspected_b=selected_part.inspected_b,
+        remark=selected_part.remark,
+        photo_uri=selected_part.photo_uri,
+    )
+    if edit_form.validate_on_submit():
+        selected_part.manufacturer = edit_form.manufacturer.data
+        selected_part.model = edit_form.model.data
+        selected_part.serial_number = edit_form.serial_number.data
+        selected_part.shipping_date = edit_form.shipping_date.data
+        selected_part.inspected_b = edit_form.inspected_b.data
+        selected_part.remark = edit_form.remark.data
+        selected_part.photo_uri = edit_form.photo_uri.data
+        selected_part.edit_date = date.today().strftime("%Y-%m-%d")
+        try:
+            db.session.commit()
+        except IntegrityError as e:
+            db.session.rollback()
+            msg = f"duplicate part id {part_id}"
+            flash(f'error: {msg}', 'error')
+        else:
+            return redirect(url_for("get_client_part", client_id=requested_client.id))
+    return render_template("make-part.html",
+                           form=edit_form,
+                           action="edit",
+                           client=requested_client,
+                           current_user=current_user,
+                           is_edit=True
+                           )
+
+# TODO: Use a decorator so only an admin user can delete a part
+@app.route("/delete-part/<int:part_id>", methods=['GET', 'POST'])
+@admin_only
+@login_required
+def delete_part(part_id):
+    client_id = request.args.get("clientId", type=str)
+    requested_client = db.get_or_404(QClient, client_id)
+    part_to_delete = db.get_or_404(QPart, part_id)
+    if part_to_delete:
+        try:
+            db.session.delete(part_to_delete)
+            db.session.commit()
+        except ProgrammingError as e:
+            db.session.rollback()
+            return jsonify({"sql error": e})
+        else:
+            return redirect(url_for("get_client_part", client_id=requested_client.id))
+    else:
+        return jsonify({"delete client error": f"delete client failed, client id ={client_id} not found!"})
 
 @app.route("/about")
 def about():
