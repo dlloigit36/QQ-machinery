@@ -10858,3 +10858,11 @@ header.masthead .post-heading .meta a {
 }
 */
 
+/* to truncate long string dataset tabel cell, show up full text hover over */
+#example td.truncate {
+  max-width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
