@@ -70,13 +70,13 @@ def register():
     if new_user_form.validate_on_submit():
         # hash and salt user entered password
         hash_salt_password = werkzeug.security.generate_password_hash(
-            new_user_form.password.data,
+            new_user_form.password.data.strip(),
             method='pbkdf2:sha256',
             salt_length=8)
         entered_email = new_user_form.email.data.strip().lower()
         register_user = QUser(
-            name=new_user_form.name.data,
-            email=entered_email,
+            name=new_user_form.name.data.strip(),
+            email=entered_email.strip(),
             password=hash_salt_password)
         # check if new register user email already exist
         result = db.session.execute(db.select(QUser).where(QUser.email == entered_email))
@@ -107,8 +107,8 @@ def register():
 def login():
     login_form = LoginForm()
     if login_form.validate_on_submit():
-        entered_email = login_form.email.data
-        entered_password = login_form.password.data
+        entered_email = login_form.email.data.strip()
+        entered_password = login_form.password.data.strip()
         # check db for entered email
         result = db.session.execute(db.select(QUser).where(QUser.email == entered_email))
         found_db_user = result.scalar()
@@ -179,8 +179,8 @@ def add_new_client():
     form = CreateClientForm()
     if form.validate_on_submit():
         new_client = QClient(
-            name=form.name.data,
-            description=form.description.data,
+            name=form.name.data.strip(),
+            description=form.description.data.strip(),
             create_date=date.today().strftime("%Y-%m-%d")
         )
         try:
@@ -210,13 +210,13 @@ def add_new_part():
     create_part_form = CreatePartForm()
     if create_part_form.validate_on_submit():
         new_part = QPart(
-            manufacturer=create_part_form.manufacturer.data,
-            model=create_part_form.model.data,
-            serial_number=create_part_form.serial_number.data,
+            manufacturer=create_part_form.manufacturer.data.strip(),
+            model=create_part_form.model.data.strip(),
+            serial_number=create_part_form.serial_number.data.strip(),
             shipping_date=create_part_form.shipping_date.data,
             inspected_b=create_part_form.inspected_b.data,
-            remark=create_part_form.remark.data,
-            photo_uri=create_part_form.photo_uri.data,
+            remark=create_part_form.remark.data.strip(),
+            photo_uri=create_part_form.photo_uri.data.strip(),
             edit_date=date.today().strftime("%Y-%m-%d"),
             create_date=date.today().strftime("%Y-%m-%d"),
             client_id=int(client_id)
@@ -253,8 +253,8 @@ def edit_client(client_id):
         description=selected_client.description
     )
     if edit_form.validate_on_submit():
-        selected_client.name = edit_form.name.data
-        selected_client.description = edit_form.description.data
+        selected_client.name = edit_form.name.data.strip()
+        selected_client.description = edit_form.description.data.strip()
         try:
             db.session.commit()
         except IntegrityError as e:
@@ -305,13 +305,13 @@ def edit_part(part_id):
         photo_uri=selected_part.photo_uri,
     )
     if edit_form.validate_on_submit():
-        selected_part.manufacturer = edit_form.manufacturer.data
-        selected_part.model = edit_form.model.data
-        selected_part.serial_number = edit_form.serial_number.data
+        selected_part.manufacturer = edit_form.manufacturer.data.strip()
+        selected_part.model = edit_form.model.data.strip()
+        selected_part.serial_number = edit_form.serial_number.data.strip()
         selected_part.shipping_date = edit_form.shipping_date.data
         selected_part.inspected_b = edit_form.inspected_b.data
-        selected_part.remark = edit_form.remark.data
-        selected_part.photo_uri = edit_form.photo_uri.data
+        selected_part.remark = edit_form.remark.data.strip()
+        selected_part.photo_uri = edit_form.photo_uri.data.strip()
         selected_part.edit_date = date.today().strftime("%Y-%m-%d")
         try:
             db.session.commit()
