@@ -43,7 +43,7 @@
                     </td>
                     <td class="truncate" data-bs-toggle="tooltip" title="{{ client.description }}">{{ client.description }}</td>
                     <td>{{ client.create_date }}</td>
-                    <td>61</td>
+                    <td><a href="{{ url_for('get_client_part', client_id=client.id) }}">{{ client.part_count }}</a></td>
                 </tr>
                 {% endfor %}
                 <!-- Add more rows as needed -->

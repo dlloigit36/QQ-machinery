@@ -142,6 +142,9 @@ def home():
 def get_all_client():
     result = db.session.execute((db.select(QClient)))
     clients = result.scalars().all()
+    for c in clients:
+        result = db.session.execute(db.select(QPart).where(QPart.client_id == int(c.id)))
+        c.part_count = len(result.scalars().all())
     client_t_header = ["Action", "Name", "Description", "Created", "Parts count"]
     return render_template(
         "list-client.html",
@@ -269,7 +272,10 @@ def edit_client(client_id):
 @login_required
 def delete_client(client_id):
     client_to_delete = db.get_or_404(QClient, client_id)
-    if client_to_delete:
+    # check if client to delete still got parts
+    result = db.session.execute(db.select(QPart).where(QPart.client_id == int(client_id)))
+    parts = result.scalars().all()
+    if client_to_delete and len(parts) == 0:
         try:
             db.session.delete(client_to_delete)
             db.session.commit()
@@ -279,7 +285,7 @@ def delete_client(client_id):
         else:
             return redirect(url_for('get_all_client'))
     else:
-        return jsonify({"delete client error": f"delete client failed, client id ={client_id} not found!"})
+        return jsonify({"delete client error": f"delete client failed, client id ={client_id} not found or still got parts!"})
 
 # TODO: Use a decorator so only an admin user can edit a part
 @app.route("/edit-part/<int:part_id>", methods=["GET", "POST"])
