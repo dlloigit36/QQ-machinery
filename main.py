@@ -198,6 +198,7 @@ def add_new_client():
     return render_template(
         "make-client.html",
         form=form,
+        to_do="create",
         current_user=current_user
     )
 
@@ -227,8 +228,8 @@ def add_new_part():
     return render_template(
         "make-part.html",
         form=create_part_form,
-        action="create",
         client=requested_client,
+        to_do="create",
         current_user=current_user
     )
 
@@ -263,7 +264,7 @@ def edit_client(client_id):
             flash(f'error: {msg}', 'error')
         else:
             return redirect(url_for("get_all_client"))
-    return render_template("make-client.html", form=edit_form, is_edit=True)
+    return render_template("make-client.html", form=edit_form, to_do="edit")
 
 
 # TODO: Use a decorator so only an admin user can delete a post
@@ -323,10 +324,9 @@ def edit_part(part_id):
             return redirect(url_for("get_client_part", client_id=requested_client.id))
     return render_template("make-part.html",
                            form=edit_form,
-                           action="edit",
                            client=requested_client,
                            current_user=current_user,
-                           is_edit=True
+                           to_do="edit"
                            )
 
 # TODO: Use a decorator so only an admin user can delete a part
