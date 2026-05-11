@@ -14,7 +14,8 @@ from sqlalchemy import Integer, String, Text
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 # Import your forms from the forms.py
-from forms import CreateClientForm, CreatePartForm, RegisterForm, LoginForm, EditClientForm, EditPartForm
+from forms import (CreateClientForm, CreatePartForm, RegisterForm, LoginForm, EditClientForm,
+                   EditPartForm, QClientViewForm)
 from dotenv import load_dotenv
 
 from db_config import db, init_db
@@ -145,7 +146,7 @@ def get_all_client():
     for c in clients:
         result = db.session.execute(db.select(QPart).where(QPart.client_id == int(c.id)))
         c.part_count = len(result.scalars().all())
-    client_t_header = ["Action", "Name", "Description", "Created", "Parts count"]
+    client_t_header = ["View", "Name", "Description", "Created", "Parts count"]
     return render_template(
         "list-client.html",
         table_header=client_t_header,
@@ -265,6 +266,25 @@ def edit_client(client_id):
         else:
             return redirect(url_for("get_all_client"))
     return render_template("make-client.html", form=edit_form, to_do="edit")
+
+# TODO: A route to view details of selected client
+@app.route("/view-client/<int:client_id>")
+@login_required
+def view_client(client_id):
+    selected_client = db.get_or_404(QClient, client_id)
+    view_form = QClientViewForm(
+        name=selected_client.name,
+        description=selected_client.description,
+        create_date=selected_client.create_date
+    )
+    if selected_client:
+        return render_template("make-client.html",
+                               form=view_form,
+                               client=selected_client,
+                               to_do="view")
+    else:
+        return redirect(url_for("get_all_client"))
+
 
 
 # TODO: Use a decorator so only an admin user can delete a post

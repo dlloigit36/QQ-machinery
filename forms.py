@@ -23,6 +23,22 @@ class EditClientForm(FlaskForm):
                                                          Length(max=500, message="Input is too long (max 500 characters).")])
     submit = SubmitField("Update Client")
 
+# TODO: Create client view form
+class QClientViewForm(FlaskForm):
+    name = StringField(
+        "Client Name",
+        validators=[DataRequired()],
+        render_kw={"readonly": True, "class": "form-control-plaintext"}
+    )
+    description = StringField(
+        "Description",
+        render_kw={"readonly": True, "class": "form-control-plaintext"}
+    )
+    create_date = StringField(
+        "Created Date",
+        render_kw={"readonly": True, "class": "form-control-plaintext"}
+    )
+
 # TODO: Create a parts Form
 class CreatePartForm(FlaskForm):
     manufacturer = StringField(
