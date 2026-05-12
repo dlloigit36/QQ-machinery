@@ -40,7 +40,13 @@
                     <td class="truncate" data-bs-toggle="tooltip" title="{{ p.model }}">{{ p.model }}</td>
                     <td class="truncate" data-bs-toggle="tooltip" title="{{ p.serial_number }}">{{ p.serial_number }}</td>
                     <td>{{ p.shipping_date }}</td>
-                    <td>{{ p.inspected_b }}</td>
+                    <td>
+                        {% if p.inspected_b == "Y" %}
+                          <span class="badge bg-success">Yes</span>
+                        {% else %}
+                          <span class="badge bg-warning text-dark">No</span>
+                        {% endif %}
+                    </td>
                     <td class="truncate" data-bs-toggle="tooltip" title="{{ p.remark }}">{{ p.remark }}</td>
                     <td class="truncate" data-bs-toggle="tooltip" title="{{ p.photo_uri }}"><a href="{{ p.photo_uri }}">{{ p.photo_uri }}</a></td>
 <!--                    <td>{{ p.edit_date }}</td>-->

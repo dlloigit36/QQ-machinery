@@ -1,0 +1,121 @@
+{% include "header.html" %}
+
+<!-- Page Header-->
+<header
+  class="masthead"
+  style="background-image: url('../static/assets/img/home-bg.jpg')"
+>
+  <div class="container position-relative px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+      <div class="col-md-12 col-lg-10 col-xl-9">
+        <div class="site-heading">
+          <h1>Dashboard</h1>
+          <span class="subheading">A summary of........</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Main Content-->
+<div class="container px-4 px-lg-5">
+  <div class="row gx-4 gx-lg-5 justify-content-center">
+    <div class="col-md-14 col-lg-12 col-xl-11">
+
+        <div class="row g-4 mb-4 justify-content-center">
+          <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm">
+              <div class="card-body text-center">
+                <h6 class="text-muted">Total Clients</h6>
+                <h3>{{ client_count }}</h3>
+                  <a href="{{ url_for('get_all_client') }}" class="stretched-link"></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm">
+              <div class="card-body text-center">
+                <h6 class="text-muted">Total Parts</h6>
+                <h3>{{ part_count }}</h3>
+                  <a href="{{ url_for('get_all_part') }}" class="stretched-link"></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clients Table -->
+        <!-- comment out clients table
+        <div class="card shadow-sm mb-4">
+          <div class="card-header fw-semibold">
+            Clients
+          </div>
+          <div class="card-body table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Create Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for client in clients %}
+                <tr>
+                  <td>{{ client.name }}</td>
+                  <td>{{ client.description }}</td>
+                  <td>{{ client.create_date }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        -->
+        <!-- Parts Table -->
+        <!-- comment out parts table
+        <div class="card shadow-sm">
+          <div class="card-header fw-semibold">
+            Parts
+          </div>
+          <div class="card-body table-responsive">
+            <table class="table table-striped align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Client</th>
+                  <th>Manufacturer</th>
+                  <th>Model</th>
+                  <th>Serial No</th>
+                  <th>Shipping Date</th>
+                  <th>Inspected</th>
+                  <th>Remark</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for part, client_name in parts %}
+                <tr>
+                  <td>{{ client_name }}</td>
+                  <td>{{ part.manufacturer }}</td>
+                  <td>{{ part.model }}</td>
+                  <td>{{ part.serial_number }}</td>
+                  <td>{{ part.shipping_date }}</td>
+                  <td>
+                    {% if part.inspected_b == "Y" %}
+                      <span class="badge bg-success">Yes</span>
+                    {% else %}
+                      <span class="badge bg-warning text-dark">No</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ part.remark or "-" }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        -->
+
+    </div>
+  </div>
+</div>
+
+{% include "footer.html" %}

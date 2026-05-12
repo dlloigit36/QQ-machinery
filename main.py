@@ -2,7 +2,7 @@ import os
 from datetime import date, datetime
 
 import werkzeug
-from flask import Flask, abort, render_template, redirect, url_for, flash, request, jsonify
+from flask import Flask, abort, render_template, redirect, url_for, flash, request, jsonify, Blueprint
 from flask_bootstrap import Bootstrap5
 from flask_ckeditor import CKEditor
 from flask_gravatar import Gravatar
@@ -134,9 +134,24 @@ def logout():
 
 
 @app.route('/')
-@login_required
 def home():
-    return redirect(url_for('get_all_client'))
+    clients = QClient.query.order_by(QClient.create_date.desc()).all()
+    # join tables on client id, {% for part, client_name in parts %}
+    parts = (
+        db.session.query(QPart, QClient.name)
+        .join(QClient, QPart.client_id == QClient.id)
+        .order_by(QPart.create_date.desc())
+        .all()
+    )
+    return render_template(
+        "dashboard.html",
+        clients=clients,
+        parts=parts,
+        client_count=len(clients),
+        part_count=len(parts),
+        current_user=current_user
+    )
+
 
 @app.route('/client')
 @login_required
