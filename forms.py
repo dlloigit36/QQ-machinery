@@ -39,6 +39,26 @@ class QClientViewForm(FlaskForm):
         render_kw={"readonly": True, "class": "form-control-plaintext"}
     )
 
+# TODO: create part view read-only form
+class QPartViewForm(FlaskForm):
+    manufacturer = StringField("Manufacturer",
+                               render_kw={"readonly": True, "class": "form-control-plaintext"})
+    model = StringField("Model",
+                        render_kw={"readonly": True, "class": "form-control-plaintext"})
+    serial_number = StringField("Serial Number",
+                                render_kw={"readonly": True, "class": "form-control-plaintext"})
+    shipping_date = StringField("Shipping Date",
+                                render_kw={"readonly": True, "class": "form-control-plaintext"})
+    inspected_b = StringField("Inspected",
+                              render_kw={"readonly": True, "class": "form-control-plaintext"})
+    remark = TextAreaField("Remark",
+                           render_kw={"readonly": True, "class": "form-control-plaintext"})
+    edit_date = StringField("Last Edited",
+                            render_kw={"readonly": True, "class": "form-control-plaintext"})
+    create_date = StringField("Created Date",
+                              render_kw={"readonly": True, "class": "form-control-plaintext"})
+
+
 # TODO: Create a parts Form
 class CreatePartForm(FlaskForm):
     manufacturer = StringField(

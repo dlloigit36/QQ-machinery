@@ -34,8 +34,8 @@
 
                 <tr>
                     <td>
-                        <a href="{{ url_for('get_client_part', client_id=client.id) }}">Parts, </a>
-                        <a href="{{ url_for('view_client', client_id=client.id) }}">Details </a>
+                        <a href="{{ url_for('view_client', client_id=client.id) }}">Details, </a>
+                        <a href="{{ url_for('get_client_part', client_id=client.id) }}">Part List</a>
 <!--                        <a href="{{ url_for('delete_client', client_id=client.id) }}">Delete</a>-->
                     </td>
                     <td class="truncate" data-bs-toggle="tooltip" title="{{ client.name }}">

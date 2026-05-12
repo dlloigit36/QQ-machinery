@@ -15,7 +15,7 @@ from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 # Import your forms from the forms.py
 from forms import (CreateClientForm, CreatePartForm, RegisterForm, LoginForm, EditClientForm,
-                   EditPartForm, QClientViewForm)
+                   EditPartForm, QClientViewForm, QPartViewForm)
 from dotenv import load_dotenv
 
 from db_config import db, init_db
@@ -348,6 +348,34 @@ def edit_part(part_id):
                            current_user=current_user,
                            to_do="edit"
                            )
+
+# TODO: A route to view details of selected part
+@app.route("/view-part/<int:part_id>")
+@login_required
+def view_part(part_id):
+    client_id = request.args.get("clientId", type=str)
+    requested_client = db.get_or_404(QClient, client_id)
+    selected_part = db.get_or_404(QPart, part_id)
+    view_form = QPartViewForm(
+        manufacturer=selected_part.manufacturer,
+        model=selected_part.model,
+        serial_number=selected_part.serial_number,
+        shipping_date=selected_part.shipping_date,
+        inspected_b=selected_part.inspected_b,
+        remark=selected_part.remark,
+        edit_date=selected_part.edit_date,
+        create_date=selected_part.create_date
+    )
+    if selected_part:
+        return render_template("make-part.html",
+                               form=view_form,
+                               client=requested_client,
+                               part=selected_part,
+                               current_user=current_user,
+                               to_do="view"
+                               )
+    else:
+        return redirect(url_for('get_client_part', client_id=client_id))
 
 # TODO: Use a decorator so only an admin user can delete a part
 @app.route("/delete-part/<int:part_id>", methods=['GET', 'POST'])
