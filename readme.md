@@ -51,3 +51,13 @@ PyCharm should detect the `requirements.txt` file automatically.
 1.  Locate your entry point file (e.g., `main.py`) in the Project tool window.
 2.  Right-click the file and select **Run 'filename'**.
 3.  For future runs, you can simply click the green **Play (▶)** button in the top-right toolbar or press `Shift + F10`.
+
+## Modify Flask secret key
+*   **Option A:** Change secret key directly on below line in "main.py"
+    ```
+    app.config['SECRET_KEY'] = os.environ.get('FLASK_KEY', "enter your own key with no space")
+    ```
+*   **Option B:** Create a .env file on root directory, with content below:
+    ```
+    FLASK_KEY='enter_your_own_key_8BYkEfBA6O6donzWlSihBXox7C0sKR6b77'
+    ```
