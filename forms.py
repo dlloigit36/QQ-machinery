@@ -53,6 +53,8 @@ class QPartViewForm(FlaskForm):
                               render_kw={"readonly": True, "class": "form-control-plaintext"})
     remark = TextAreaField("Remark",
                            render_kw={"readonly": True, "class": "form-control-plaintext"})
+    photo_url = TextAreaField("Photo URL",
+                           render_kw={"readonly": True, "class": "form-control-plaintext"})
     edit_date = StringField("Last Edited",
                             render_kw={"readonly": True, "class": "form-control-plaintext"})
     create_date = StringField("Created Date",

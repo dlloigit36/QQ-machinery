@@ -154,6 +154,20 @@ def get_all_client():
         current_user=current_user
     )
 
+# TODO: route to display all parts from db
+@app.route('/all-part')
+@login_required
+def get_all_part():
+    result = db.session.execute((db.select(QPart)))
+    parts = result.scalars().all()
+    part_t_header = ["View", "Manufacturer", "Model", "Serial number", "Shipping date", "Inspected", "Remark",
+                   "Photo URL", "Client ID"]
+    return render_template(
+        "list-part-all.html",
+        table_header=part_t_header,
+        all_part=parts,
+        current_user=current_user
+    )
 
 # TODO: Route to list part for selected client.
 @app.route("/client-part/<int:client_id>")
@@ -363,6 +377,7 @@ def view_part(part_id):
         shipping_date=selected_part.shipping_date,
         inspected_b=selected_part.inspected_b,
         remark=selected_part.remark,
+        photo_url=selected_part.photo_uri,
         edit_date=selected_part.edit_date,
         create_date=selected_part.create_date
     )

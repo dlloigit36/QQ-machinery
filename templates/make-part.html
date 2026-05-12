@@ -101,6 +101,14 @@ include "header.html" %}
               </div>
               <div class="row mb-3">
                 <label class="col-sm-4 col-form-label fw-bold">
+                  {{ form.photo_url.label.text }}
+                </label>
+                <div class="col-sm-8">
+                  <p class="form-control-plaintext">{{ form.photo_url.data }}</p>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label class="col-sm-4 col-form-label fw-bold">
                   {{ form.edit_date.label.text }}
                 </label>
                 <div class="col-sm-8">
