@@ -10787,6 +10787,7 @@ header.masthead .post-heading .meta a {
 /* Table font size */
 #example {
   font-size: 0.875rem; /* 14px */
+  width: 100%;
 }
 
 /* Table headers */
